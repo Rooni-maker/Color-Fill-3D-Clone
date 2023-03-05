@@ -1,23 +1,19 @@
-//Shady
 using UnityEngine;
 using System.Drawing;
-using Sirenix.OdinInspector;
 using System.Collections.Generic;
 
-[HideMonoScript]
 public class GridManager : Singleton<GridManager>
 {
-    [Title("GRID MANAGER", "SINGLETON", titleAlignment: TitleAlignments.Centered)]
-    [SerializeField, DisplayAsString] int _gridColumns = 10;
-    [SerializeField, DisplayAsString] int _gridRows    = 10;
-    [SerializeField, DisplayAsString] int _totalCount  = 0;
-    [SerializeField, DisplayAsString] int _trueCount   = 0;
-    [SerializeField, ProgressBar(0f, 1f, Height = 20)] float _progress  = 0f;
-    [Space]
-    [HideInEditorMode]
-    [ShowInInspector, ReadOnly] bool[,] _grid;
 
-    private const float PercentFalseCount = 0.1f;
+    [SerializeField] private int _gridColumns = 10;
+    [SerializeField] private int _gridRows    = 10;
+    private int _totalCount  = 0;
+    private int _trueCount   = 0;
+    private float _progress  = 0f;
+    [Space]
+    bool[,] _grid;
+
+    private const float _percentFalseCount = 0.1f;
     private float _limitToFill = 0f;
 
     public void InitGrid(int col, int row)
@@ -26,7 +22,7 @@ public class GridManager : Singleton<GridManager>
         _gridRows    = row;
         _grid        = new bool[_gridColumns, _gridRows];
         _totalCount  = _gridColumns * _gridRows;
-        _limitToFill = _totalCount * PercentFalseCount;
+        _limitToFill = _totalCount * _percentFalseCount;
     }//InitGrid() end
 
     public void ChangeValue(float x, float z)
@@ -35,12 +31,12 @@ public class GridManager : Singleton<GridManager>
         int row = Mathf.Abs(Mathf.RoundToInt(z - (_gridRows/2)));
         _grid[col, row] = true;
         _trueCount++;
-    }//ChangeValue() end
+    }
 
-    public void PerformFloodFill()
+    public void ApplyFloodFill()
     {
         if(AudioManager.Instance)
-            AudioManager.Instance?.PlaySFX(SFX.Collect);
+            AudioManager.Instance?.Play("Collect");
         Haptics.Generate(HapticTypes.LightImpact);
         for(int i = 0; i < 2; i++)  
         {                           
@@ -51,18 +47,18 @@ public class GridManager : Singleton<GridManager>
             bool[,] gridToPrint = FloodFill(gridCopy, gridCopySecond);
             SetProgressBar(gridToPrint);
             _grid = (bool[,])gridToPrint.Clone();
-        }//loop end      
+        }      
 
         if(_progress >= 1f)
             GameManager.Instance.LevelComplete();
-    }//PerformFloodFill() end
+    }
 
     private void SetProgressBar(bool[,] _grid)
     {
         _trueCount = GetTrueGridCount(_grid);
         _progress = (float)_trueCount / _totalCount;
         UI_Manager.Instance.FillAmount(_progress);
-    }//SetProgressBar() end
+    }
 
     private int GetTrueGridCount(bool[,] _grid)
     {
@@ -73,10 +69,10 @@ public class GridManager : Singleton<GridManager>
             {
                 if(_grid[col, row])
                     trueCount++;
-            }//loop end
-        }//loop end
+            }
+        }
         return trueCount;
-    }//GetTrueGridCount() end
+    }
 
     private bool[,] FloodFill(bool[,] _grid, bool[,] gridCopySecond)
     {
@@ -90,7 +86,7 @@ public class GridManager : Singleton<GridManager>
         {
             MakeCubes(testPointList);
             return gridCopy3;
-        }//if end
+        }
 
         Point randPoint = new Point();
         do
@@ -118,7 +114,7 @@ public class GridManager : Singleton<GridManager>
                 if ((w.Y < _gridRows - 1) && !_grid[w.X, w.Y + 1])
                     q.Enqueue(new Point(w.X, w.Y + 1));
                 w.X--;
-            }//loop end
+            }
             while ((e.X <= _gridColumns - 1) && !_grid[e.X, e.Y])
             {
                 _grid[e.X, e.Y] = true;
@@ -129,8 +125,8 @@ public class GridManager : Singleton<GridManager>
                 if ((e.Y < _gridRows - 1) && !_grid[e.X, e.Y + 1])
                     q.Enqueue(new Point(e.X, e.Y + 1));
                 e.X++;
-            }//loop end
-        }//loop end
+            }
+        }
         List<Point> secondTryPointList = new List<Point>();
         int falseCount = FindFalseCountPositions(_grid, ref secondTryPointList, gridCopySecond);
 
@@ -138,12 +134,12 @@ public class GridManager : Singleton<GridManager>
         {
             MakeCubes(firstTryPointList);
             return _grid;
-        }//if end
+        }
 
         if(secondTryPointList.Count > 0)
             MakeCubes(secondTryPointList);
         return gridCopySecond;
-    }//FloodFill() end
+    }
 
     private void MakeCubes(List<Point> pointList)
     {
@@ -152,8 +148,8 @@ public class GridManager : Singleton<GridManager>
             Vector3 repCubePos = FindTransformFromPoint(point);
             Cube cube = CubePool.Instance.GetCube();
             cube.Init(repCubePos, true);
-        }//loop end
-    }//MakeCubes() end
+        }
+    }
 
     private Vector3 FindTransformFromPoint(Point point) => new Vector3((float)(point.X - (float)_gridColumns/2f), 0.3f, (float)((float)_gridRows/2f - point.Y));  
 
@@ -169,9 +165,8 @@ public class GridManager : Singleton<GridManager>
                 falseCount++;
                 gridCopy2[col, row] = true;
                 pointList.Add(new Point(col, row));
-            }//loop end
-        }//loop end
+            }
+        }
         return falseCount;
-    }//FindFalseCountPositions() end
-
-}//class end
+    }
+}

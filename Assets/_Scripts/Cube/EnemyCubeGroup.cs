@@ -1,13 +1,8 @@
-//Shady
 using UnityEngine;
-using Sirenix.OdinInspector;
 
-[HideMonoScript]
 public class EnemyCubeGroup : MonoBehaviour
 {
-    [Title("ENEMY CUBE GROUP", null, titleAlignment: TitleAlignments.Centered)]
     [SerializeField] EnemyCube[] Cubes = null;
-    [DisplayAsString]
     [SerializeField] int Detected = 0;
 
     private void Start() => Cubes = GetComponentsInChildren<EnemyCube>();
@@ -25,7 +20,7 @@ public class EnemyCubeGroup : MonoBehaviour
         Detected++;
         if(Detected == Cubes.Length)
         {
-            AudioManager.Instance?.PlaySFX(SFX.Impact);
+            AudioManager.Instance?.Play("Impact");
             gameObject.SetActive(false);
         }//if end
     }//class end

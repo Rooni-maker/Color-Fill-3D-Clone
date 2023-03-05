@@ -1,14 +1,9 @@
-//Shady
-//FadeSystem v1.1_2
 using UnityEngine;
-using DG.Tweening;
 using UnityEngine.UI;
-using Sirenix.OdinInspector;
+using DG.Tweening;
 
-[HideMonoScript]
 public class FadeSystem : DontDestroySingleton<FadeSystem>
 {
-    [Title("FADE SYSTEM", "SINGLETON", titleAlignment: TitleAlignments.Centered)]
     [SerializeField] Image Panel = null;
     [Range(0.2f, 1.0f)]
     [SerializeField] float FadeSpeed = 1.0f;
@@ -17,7 +12,7 @@ public class FadeSystem : DontDestroySingleton<FadeSystem>
     {
         base.Init();
         Panel = GetComponentInChildren<Image>();
-    }//Awake() end
+    }
 
     public void Fade(GameObject TurnOff = null, GameObject TurnOn = null)
     {

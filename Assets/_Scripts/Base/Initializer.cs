@@ -1,12 +1,9 @@
-//Shady
 using UnityEngine;
 using DG.Tweening;
-using Sirenix.OdinInspector;
 
-[HideMonoScript]
 public class Initializer : MonoBehaviour
 {
-    [Title("SEQUENTIAL INITIALIZER", null, titleAlignment: TitleAlignments.Centered)]
+    [Header("SEQUENTIAL INITIALIZER")]
     [SerializeField] MonoBehaviour[] Scripts = null;
 
     private void Awake()
@@ -16,7 +13,7 @@ public class Initializer : MonoBehaviour
         {
             if(Scripts[i].TryGetComponent<IInit>(out IInit init))
                 init.Init();
-        }//loop end
-    }//Awake() end
+        }
+    }
 
-}//class end
+}

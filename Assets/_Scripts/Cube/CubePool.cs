@@ -1,53 +1,49 @@
-//Shady
 using UnityEngine;
-using Sirenix.OdinInspector;
 using System.Collections.Generic;
 
-[HideMonoScript]
 public class CubePool : Singleton<CubePool>
 {
-    [Title("CUBE POOL", "SINGLETON", titleAlignment: TitleAlignments.Centered)]
-    [SerializeField] int _poolSize = 100;
-    [SerializeField] Cube _cubePrefab = null;
+    [SerializeField] int _poolSize;
+    [SerializeField] Cube cubePrefab = null;
 
-    private Queue<Cube> _cubeQueue = new Queue<Cube>();
-    private List<Cube> TakenCubes = new List<Cube>();
+    private Queue<Cube> cubesQueue = new Queue<Cube>();
+    private List<Cube> occupiedCubes = new List<Cube>();
 
     public override void Init()
     {
         base.Init();
         MakePool();
-    }//Init() end
+    }
 
     private void MakePool()
     {
         for(int i=0 ; i<_poolSize ; i++)
         {
-            Cube cube = Instantiate(_cubePrefab.gameObject, transform).GetComponent<Cube>();
+            Cube cube = Instantiate(cubePrefab.gameObject, transform).GetComponent<Cube>();
             cube.gameObject.SetActive(false);
-            _cubeQueue.Enqueue(cube);
-        }//loop end
-    }//MakePool() end
+            cubesQueue.Enqueue(cube);
+        }
+    }
 
     public Cube GetCube()
     {
-        if(_cubeQueue.Count == 0)
+        if(cubesQueue.Count == 0)
             MakePool();
-        TakenCubes.Add(_cubeQueue.Dequeue());
-        return TakenCubes[TakenCubes.Count - 1];
-    }//GetCube() end
+        occupiedCubes.Add(cubesQueue.Dequeue());
+        return occupiedCubes[occupiedCubes.Count - 1];
+    }
 
     public void PutBackInQueue(Cube cube)
     {
         cube.ResetCube();
-        _cubeQueue.Enqueue(cube);
-    }//PutBackInQueue() end
+        cubesQueue.Enqueue(cube);
+    }
 
     public void Restart()
     {
-        for(int i=0 ; i<TakenCubes.Count ; i++)
-            PutBackInQueue(TakenCubes[i]);
-        TakenCubes.Clear();
-    }//Restart() end
+        for(int i=0 ; i<occupiedCubes.Count ; i++)
+            PutBackInQueue(occupiedCubes[i]);
+        occupiedCubes.Clear();
+    }
 
-}//class end
+}

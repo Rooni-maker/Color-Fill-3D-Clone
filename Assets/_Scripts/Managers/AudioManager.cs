@@ -1,79 +1,124 @@
-//Shady
+using UnityEngine.Audio;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using Sirenix.OdinInspector;
 
-public enum SFX
+public class AudioManager : MonoBehaviour
 {
-    Click,
-    GameWin,
-    GameLose,
-    Collect,
-    Impact
-}//enum end
 
-[HideMonoScript]
-public class AudioManager : DontDestroySingleton<AudioManager>
-{
-    [Title("AUDIO MANAGER", "SINGLETON", titleAlignment: TitleAlignments.Centered)]
-    [SerializeField] AudioSource BGSource   = null;
-    [SerializeField] AudioSource SFXSource  = null;
+	public static AudioManager Instance;
 
-    [FoldoutGroup("Background Music")]
-    [SerializeField] AudioClip BGMusic = null;
+	//public AudioMixerGroup mixerGroup;
 
-    [FoldoutGroup("SFX Clips")]
-    [SerializeField] AudioClip ClickClip    = null;
-    [FoldoutGroup("SFX Clips")]
-    [SerializeField] AudioClip GameWinClip  = null;
-    [FoldoutGroup("SFX Clips")]
-    [SerializeField] AudioClip GameLoseClip = null;
-    [FoldoutGroup("SFX Clips")]
-    [SerializeField] AudioClip CollectClip  = null;
-    [FoldoutGroup("SFX Clips")]
-    [SerializeField] AudioClip ImpactClip   = null;
+	public Sound[] sounds;
+	List<GameObject> soundsObjects = new List<GameObject>();
+	public bool isMute;
 
-    public override void Init()
-    {
-        base.Init();
-        SetBGSetting(SaveData.Instance.Music);
-        SetSFXSetting(SaveData.Instance.SFX);
-    }//Start() end
+	void Awake()
+	{
+		if (Instance != null)
+		{
+			Destroy(gameObject);
+		}
+		else
+		{
+			Instance = this;
+			DontDestroyOnLoad(gameObject);
+		}
+		foreach (var VARIABLE in sounds)
+		{
+			GameObject go = new GameObject();
+			go.AddComponent<AudioSource>();
+			go.GetComponent<AudioSource>().clip = VARIABLE.clip;
+			soundsObjects.Add((go));
+			go.transform.parent = transform;
+			go.transform.name = VARIABLE.name;
+			go.GetComponent<AudioSource>().volume = VARIABLE.volume;
 
-    public void StartGame()
-    {
-        if(BGSource.isPlaying)
-            return;
-        BGSource.clip = BGMusic;
-        BGSource.loop = true;
-        BGSource.Play();
-    }//StartGame() end
+			go.GetComponent<AudioSource>().loop = VARIABLE.loop;
+			go.GetComponent<AudioSource>().priority = VARIABLE.prirority;
+		}
 
-    public void SetBGSetting(bool Toggle) => BGSource.mute  = !Toggle;
 
-    public void SetSFXSetting(bool Toggle) => SFXSource.mute = !Toggle;
+	}
 
-    public void GameEnd() => BGSource.Stop();
+	public void Play(string sound, float _time = 0)
+	{
+		if (PlayerPrefs.GetInt("soundOn") == 1)
+		{
+			return;
+		}
+		/*Sound s = Array.Find(sounds, item => item.name == sound);
+		 
+		if (s == null)
+		{
+			Debug.LogWarning("Sound: " + name + " not found!");
+			return;
+		}*/
+		foreach (var VARIABLE in soundsObjects)
+		{
+			if (sound == VARIABLE.name)
+			{
 
-    public void PlaySFX(SFX sfx, float volume = 1f)
-    {
-        switch(sfx)
-        {
-            case SFX.Click:
-                SFXSource.PlayOneShot(ClickClip, volume);
-            break;
-            case SFX.GameWin:
-                SFXSource.PlayOneShot(GameWinClip, volume);
-            break;
-            case SFX.GameLose:
-                SFXSource.PlayOneShot(GameLoseClip, volume);
-            break;
-            case SFX.Collect:
-                SFXSource.PlayOneShot(CollectClip, volume);
-            break;
-            case SFX.Impact:
-                SFXSource.PlayOneShot(ImpactClip, volume);
-            break;
-        }//switch end
-    }//PlaySFX() end
+				StartCoroutine(PlayAudio(VARIABLE.GetComponent<AudioSource>(), _time));
+			}
+		}
 
-}//class end
+
+		//s.source.volume = s.volume * (1f + UnityEngine.Random.Range(-s.volumeVariance / 2f, s.volumeVariance / 2f));
+		//s.source.pitch = s.pitch * (1f + UnityEngine.Random.Range(-s.pitchVariance / 2f, s.pitchVariance / 2f));
+
+
+	}
+	public void Stop(string sound, float _time = 0)
+	{
+		if (PlayerPrefs.GetInt("soundOn") == 1)
+		{
+			return;
+		}
+		/*Sound s = Array.Find(sounds, item => item.name == sound);
+		 
+		if (s == null)
+		{
+			Debug.LogWarning("Sound: " + name + " not found!");
+			return;
+		}*/
+		foreach (var VARIABLE in soundsObjects)
+		{
+			if (sound == VARIABLE.name)
+			{
+				VARIABLE.GetComponent<AudioSource>().Stop();
+				//StartCoroutine(PlayAudio(VARIABLE.GetComponent<AudioSource>(), _time));
+			}
+		}
+
+
+		//s.source.volume = s.volume * (1f + UnityEngine.Random.Range(-s.volumeVariance / 2f, s.volumeVariance / 2f));
+		//s.source.pitch = s.pitch * (1f + UnityEngine.Random.Range(-s.pitchVariance / 2f, s.pitchVariance / 2f));
+
+
+	}
+
+
+	IEnumerator PlayAudio(AudioSource source, float delay)
+	{
+		yield return new WaitForSeconds(delay);
+		source.Play();
+
+	}
+
+
+	public void StopAllAudios()
+	{
+		for (int i = 0; i < soundsObjects.Count; i++)
+		{
+			soundsObjects[i].GetComponent<AudioSource>().Stop();
+		}
+	}
+
+
+
+
+
+}

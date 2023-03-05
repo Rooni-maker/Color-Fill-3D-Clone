@@ -1,54 +1,68 @@
-//Shady
 using TMPro;
 using UnityEngine;
-using DG.Tweening;
 using UnityEngine.UI;
-using Sirenix.OdinInspector;
-
-[HideMonoScript]
+using DG.Tweening;
 public class UI_Manager : Singleton<UI_Manager>
 {
-    [Title("UI_MANAGER", "SINGLETON", titleAlignment: TitleAlignments.Centered)]
-    [SerializeField] CanvasGroup StartScreen      = null;
-    [SerializeField] TMP_Text    CurrentLevelText = null;
-    [SerializeField] TMP_Text    NextLevelText    = null;
-    [SerializeField] GameObject  LevelWinPanel    = null;
-    [SerializeField] Button      NextLevelBtn     = null;
-    [SerializeField] TMP_Text    LevelWinText     = null;
-    [SerializeField] GameObject  LevelLosePanel   = null;
-    [SerializeField] Button      RetryLevelBtn    = null;
-    [SerializeField] TMP_Text    LevelFailText    = null;
-    [SerializeField] Image       Fill             = null;
+    [Space(20)]
+    [Header("Game Win n Fail UI Data")]
+
+    [SerializeField] CanvasGroup _startScreen      = null;
+    [SerializeField] GameObject  _levelWinPanel    = null;
+    [SerializeField] GameObject  _levelLosePanel   = null;
+
+    [SerializeField] Button      _nextLevelBtn     = null;
+    [SerializeField] Button      _retryLevelBtn    = null;
+
+    [Space(20)]
+    [Header("Text for level Data")]
+
+    [SerializeField] TextMeshProUGUI _currentLevelText = null;
+    [SerializeField] TextMeshProUGUI _nextLevelText    = null;
+    [SerializeField] TextMeshProUGUI _levelWinText     = null;
+    [SerializeField] TextMeshProUGUI _levelFailText    = null;
+
+    [SerializeField] Image       fillBar          = null;
+    [SerializeField] float       fillTime      = 0.3f;
+
 
     public void Start()
     {
-        LevelWinPanel.SetActive(false);
-        LevelLosePanel.SetActive(false);
-        Fill.fillAmount = 0f;
-        NextLevelBtn.onClick.RemoveAllListeners();
-        NextLevelBtn.onClick.AddListener(GameManager.Instance.Replay);
-        RetryLevelBtn.onClick.RemoveAllListeners();
-        RetryLevelBtn.onClick.AddListener(GameManager.Instance.Replay);
-        NextLevelText.text    = (GameManager.Instance.GetCurrentLevel + 1).ToString();
-        CurrentLevelText.text = GameManager.Instance.GetCurrentLevel.ToString();
-    }//Start() end
+        _levelWinPanel.SetActive(false);
+        _levelLosePanel.SetActive(false);
+        fillBar.fillAmount = 0f;
+        _nextLevelBtn.onClick.RemoveAllListeners();
+        _nextLevelBtn.onClick.AddListener(GameManager.Instance.Replay);
+        _retryLevelBtn.onClick.RemoveAllListeners();
+        _retryLevelBtn.onClick.AddListener(GameManager.Instance.Replay);
+        _nextLevelText.text    = (GameManager.Instance.GetCurrentLevel + 1).ToString();
+        _currentLevelText.text = GameManager.Instance.GetCurrentLevel.ToString();
+    }
 
-    public void FillAmount(float amount) => Fill.DOFillAmount(amount, 0.25f);
-
-    public void StartGame() => StartScreen.DOFade(0.0f, 0.5f).OnComplete(()=>StartScreen.gameObject.SetActive(false));
-
-    public void LevelComplete()
+    public void FillAmount(float value)
     {
-        LevelWinText.text = "LEVEL\n<size=190>COMPLETED!";
-        LevelWinPanel.SetActive(true);
-        LevelWinPanel.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
-    }//LevelComplete() end
-
-    public void LevelLose()
+        fillBar.DOFillAmount(value, fillTime);
+    }
+    public void StartGame()
     {
-        LevelFailText.text = "LEVEL\n<size=200>FAILED";
-        LevelLosePanel.SetActive(true);
-        LevelLosePanel.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
-    }//LevelLose() end
+        _startScreen.DOFade(0.0f, 0.5f).OnComplete(() =>
+        {
+            _startScreen.gameObject.SetActive(false);
+        });
+    }
+    #region Level Win and Fail Scenario
+    public void LevelWin()
+    {
+        _levelWinText.text = "LEVEL\n<size=190>COMPLETED!";
+        _levelWinPanel.SetActive(true);
+        _levelWinPanel.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+    }
 
-}//class end
+    public void LevelFail()
+    {
+        _levelFailText.text = "LEVEL\n<size=200>FAILED";
+        _levelLosePanel.SetActive(true);
+        _levelLosePanel.GetComponent<CanvasGroup>().DOFade(1f, 0.5f);
+    }
+    #endregion
+}

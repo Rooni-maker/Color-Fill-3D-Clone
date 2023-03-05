@@ -1,4 +1,3 @@
-//Shady
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -8,22 +7,22 @@ public class SaveSystem
 {
     public static void SaveProgress()
     {
-        SaveData.Instance.HashOfSaveData = HashGenerator(SaveObjectAsJSON());
-        File.WriteAllText(GetSavePath(), JsonUtility.ToJson(SaveData.Instance, true));
+        DataBase.Instance.HashOfSaveData = HashGenerator(SaveObjectAsJSON());
+        File.WriteAllText(GetSavePath(), JsonUtility.ToJson(DataBase.Instance, true));
     }//SaveProgress() end
 
-    private static string SaveObjectAsJSON() => JsonUtility.ToJson(SaveData.Instance.CreateSaveObject(), true);
+    private static string SaveObjectAsJSON() => JsonUtility.ToJson(DataBase.Instance.CreateSaveObject(), true);
 
     public static void LoadProgress()
     {
         if(File.Exists(GetSavePath())) 
         {
-            JsonUtility.FromJsonOverwrite(File.ReadAllText(GetSavePath()), SaveData.Instance);
+            JsonUtility.FromJsonOverwrite(File.ReadAllText(GetSavePath()), DataBase.Instance);
             if(!Application.isEditor) // This is for checking Tampering of Save File outside the Edtior Only
             {
-                if((HashGenerator(SaveObjectAsJSON()) != SaveData.Instance.HashOfSaveData))
+                if((HashGenerator(SaveObjectAsJSON()) != DataBase.Instance.HashOfSaveData))
                 {
-                    SaveData.Instance.Reset();
+                    DataBase.Instance.Reset();
                     DeleteProgress();
                     SaveProgress();
                 }//if end

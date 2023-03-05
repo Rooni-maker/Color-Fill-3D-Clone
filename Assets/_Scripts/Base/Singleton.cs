@@ -1,4 +1,3 @@
-//Shady
 using UnityEngine;
 
 public interface IInit

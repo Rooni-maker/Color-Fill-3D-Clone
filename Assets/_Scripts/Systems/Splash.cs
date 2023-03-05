@@ -1,18 +1,14 @@
-//Shady
 using UnityEngine;
-using Sirenix.OdinInspector;
+using System.Collections;
 using UnityEngine.SceneManagement;
 
-[HideMonoScript]
 public class Splash : MonoBehaviour
 {
-    [Title("SPLASH", null, titleAlignment: TitleAlignments.Centered)]
     [SerializeField] float delay = 1f;
 
-    private async void Start()
+    IEnumerator Start()
     {
-        await Tasks.Delay(delay);
+        yield return new WaitForSeconds(delay);
         FadeSystem.Instance.Fade(()=>SceneManager.LoadScene(1));
-    }//Start() end
-
-}//class end
+    }
+}

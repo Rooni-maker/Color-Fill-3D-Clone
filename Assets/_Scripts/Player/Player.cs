@@ -1,65 +1,58 @@
-//Shady
 using UnityEngine;
-using DG.Tweening;
-using Sirenix.OdinInspector;
 using System.Collections.Generic;
-
-[HideMonoScript]
+using DG.Tweening;
 public class Player : MonoBehaviour
 {
-    [Title("PLAYER", null, titleAlignment: TitleAlignments.Centered)]
-    [DisplayAsString]
-    [SerializeField] bool _spawnCubes = false;
+    private PlayerController _playerController;
+
+    [SerializeField] bool spawnCubes = false;
     [SerializeField] List<Cube> spawnedCubes = new List<Cube>();
-
-    private PlayerMovement _playerMovement = null;
-
-    public bool SpawnCubes{get => _spawnCubes; set => _spawnCubes = value;}
+    public bool SpawnCubes{get => spawnCubes; set => spawnCubes = value;}
 
     public void Init()
     {
-        _playerMovement = GetComponent<PlayerMovement>();
+        _playerController = GetComponent<PlayerController>();
         spawnedCubes = new List<Cube>();
         MakeCube();
-    }//Start() end
+    }
 
     private Vector3 RoundPos() => new Vector3((float)Mathf.Round(transform.position.x), transform.position.y, (float)Mathf.Round(transform.position.z));
 
     public void SpawnCube()
     {
-        if(!_spawnCubes)
+        if(!spawnCubes)
             return;
         MakeCube();
-    }//SpawnCube() end
+    }
 
     private void MakeCube()
     {
         spawnedCubes.Add(CubePool.Instance.GetCube());
         spawnedCubes[spawnedCubes.Count - 1].Init(new Vector3((float)Mathf.Round(transform.position.x), transform.position.y - 0.7f, (float)Mathf.Round(transform.position.z)));
-    }//MakeCube() end
+    }
 
     private void FillCubes()
     {
         for(int i=0 ; i<spawnedCubes.Count ; i++)
             spawnedCubes[i].FillCube();
         spawnedCubes.Clear();
-    }//FillCubes() end
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.CompareTag("Boundary"))
         {
-            _playerMovement.IsMoving = false;
+            _playerController.IsMoving = false;
             transform.DOMove(RoundPos(), 0.1f);
-            if(_spawnCubes)
+            if(spawnCubes)
             {
                 SpawnCube();
-                _spawnCubes = false;
+                spawnCubes = false;
                 FillCubes();
-                GridManager.Instance.PerformFloodFill();
-            }//if end
-        }//if end
-    }//OnCollisionEnter() end
+                GridManager.Instance.ApplyFloodFill();
+            }
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -68,8 +61,8 @@ public class Player : MonoBehaviour
             if(cube.IsFilled)
             {
                 FillCubes();
-                if(_spawnCubes)
-                    GridManager.Instance.PerformFloodFill();
+                if(spawnCubes)
+                    GridManager.Instance.ApplyFloodFill();
             }//if end
             else
             {
@@ -82,30 +75,30 @@ public class Player : MonoBehaviour
         }//if end
         else if(other.TryGetComponent<EnemyCube>(out EnemyCube enemyCube))
         {
-            _playerMovement.IsMoving = false;
+            _playerController.IsMoving = false;
             transform.position = RoundPos();
             GameManager.Instance.LevelLose();
         }//else if end
-    }//OnTriggerEnter() end
+    }
 
     private void OnTriggerStay(Collider other)
     {
         if(other.TryGetComponent<Cube>(out Cube cube))
         {
             if(cube.IsFilled)
-                _spawnCubes = false;
+                spawnCubes = false;
         }//if end
-    }//OnTriggerStay() end
+    }
 
     private void OnTriggerExit(Collider other)
     {
         if(other.TryGetComponent<Cube>(out Cube cube))
         {
             if(cube.IsFilled)
-                _spawnCubes = true;
+                spawnCubes = true;
             else
                 cube.CanHarm = true;
         }//if end
-    }//OnTriggerExit() end
+    }
 
 }//class end
