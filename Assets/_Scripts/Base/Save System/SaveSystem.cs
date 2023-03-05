@@ -9,7 +9,7 @@ public class SaveSystem
     {
         DataBase.Instance.HashOfSaveData = HashGenerator(SaveObjectAsJSON());
         File.WriteAllText(GetSavePath(), JsonUtility.ToJson(DataBase.Instance, true));
-    }//SaveProgress() end
+    }
 
     private static string SaveObjectAsJSON() => JsonUtility.ToJson(DataBase.Instance.CreateSaveObject(), true);
 
@@ -18,19 +18,19 @@ public class SaveSystem
         if(File.Exists(GetSavePath())) 
         {
             JsonUtility.FromJsonOverwrite(File.ReadAllText(GetSavePath()), DataBase.Instance);
-            if(!Application.isEditor) // This is for checking Tampering of Save File outside the Edtior Only
+            if(!Application.isEditor)
             {
                 if((HashGenerator(SaveObjectAsJSON()) != DataBase.Instance.HashOfSaveData))
                 {
                     DataBase.Instance.Reset();
                     DeleteProgress();
                     SaveProgress();
-                }//if end
-            }//if end
-        }//if end
+                }
+            }
+        }
         else     
             SaveProgress();
-    }//LoadProgress() end
+    }
 
     private static string HashGenerator(string SaveContent)
     {
@@ -40,15 +40,15 @@ public class SaveSystem
         foreach (byte Bit in Crypto)
         {
             Hash += Bit.ToString("x2");
-        }//loop end
+        }
         return Hash;
-    }//HashGenerator() end
+    }
 
     private static void DeleteProgress()
     {
         if(File.Exists(GetSavePath()))
             File.Delete(GetSavePath());
-    }//DeleteProgress() end
+    }
 
     private static string GetSavePath() => Path.Combine(Application.persistentDataPath, "SavedGame.json");
 
@@ -63,7 +63,7 @@ public class SaveSystem
             UnityEditor.EditorUtility.RevealInFinder(GetSavePath());
         else
             UnityEditor.EditorUtility.RevealInFinder(Application.persistentDataPath);
-    }//OpenSaveFile() end
+    }
 
     //For Restting Save Data File => Shortcut key (Ctrl or Cmd) + Shift + r
     [UnityEditor.MenuItem("Shady/Save System/Reset Save Data %#r")]
@@ -73,9 +73,9 @@ public class SaveSystem
         {
             UnityEditor.EditorUtility.DisplayDialog("Save Data", "Save Data Reset Succesful!", "Okay");
             DeleteProgress();
-        }//if end
-    }//ResetSaveData() end
+        }
+    }
 
 #endif
 
-}//class end
+}

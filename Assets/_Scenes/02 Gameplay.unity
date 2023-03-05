@@ -4998,8 +4998,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isMoving: 0
-  moveSpeed: 6
-  _useKeyboard: 1
+  moveSpeed: 7
+  _useKeyboard: 0
 --- !u!1 &1101926224
 GameObject:
   m_ObjectHideFlags: 0

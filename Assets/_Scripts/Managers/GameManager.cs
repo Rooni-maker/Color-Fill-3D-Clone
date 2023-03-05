@@ -52,8 +52,6 @@ public class GameManager : Singleton<GameManager>
             Player.transform.position = Levels[LevelToUse - 1].PlayerPos.position;
 
         Haptics.Generate(HapticTypes.LightImpact);
-        //if(AudioManager.Instance)
-        //    AudioManager.Instance.Play("GameStart");
 
         Camera.transform.position = new Vector3(-0.5f, 25f, 15f);
         Camera.transform.DOMoveZ(-5f, 0.5f);
@@ -70,7 +68,6 @@ public class GameManager : Singleton<GameManager>
     private void StartGame()
     {
         _gameStarted = true;
-        // change audio manager
         AudioManager.Instance.Play("Click");
         UI_Manager.Instance.StartGame();
         _gameRunning = true;

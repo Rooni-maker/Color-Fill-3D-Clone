@@ -23,7 +23,7 @@ public class GridManager : Singleton<GridManager>
         _grid        = new bool[_gridColumns, _gridRows];
         _totalCount  = _gridColumns * _gridRows;
         _limitToFill = _totalCount * _percentFalseCount;
-    }//InitGrid() end
+    }
 
     public void ChangeValue(float x, float z)
     {

@@ -166,9 +166,9 @@ public class PlayerController : MonoBehaviour
                     return;
                 _moveVector = Vector3.right;
             break;
-        }//switch end
+        }
         SetTargetPos();
-    }//ApplyMovement() end
+    }
 
     private void SetTargetPos()
     {
@@ -177,6 +177,6 @@ public class PlayerController : MonoBehaviour
         _player.SpawnCubes = isMoving = true;
         targetPos  = transform.position + _moveVector;
         startPos3  = transform.position;
-    }//SetTargetPos() end
+    }
 
-}//class end
+}
