@@ -2,27 +2,30 @@ using UnityEngine;
 
 public class EnemyCubeGroup : MonoBehaviour
 {
-    [SerializeField] EnemyCube[] Cubes = null;
-    [SerializeField] int Detected = 0;
+    [SerializeField] Enemy[] _cubes;
+    [SerializeField] int _collided = 0;
 
-    private void Start() => Cubes = GetComponentsInChildren<EnemyCube>();
+    private void Start()
+    {
+         _cubes = GetComponentsInChildren<Enemy>();
+    }
 
     public void Restart()
     {
-        Detected = 0;
+        _collided = 0;
         gameObject.SetActive(true);
-        for(int i=0 ; i<Cubes.Length ; i++)
-            Cubes[i].gameObject.SetActive(true);
-    }//Restart() end
+        for(int i=0 ; i<_cubes.Length ; i++)
+            _cubes[i].gameObject.SetActive(true);
+    }
 
-    public void CubeDestroyed()
+    public void CubesDestroyed()
     {
-        Detected++;
-        if(Detected == Cubes.Length)
+        _collided++;
+        if(_collided == _cubes.Length)
         {
-            AudioManager.Instance?.Play("Impact");
+            AudioManager.Instance.Play("Impact");
             gameObject.SetActive(false);
-        }//if end
-    }//class end
+        }
+    }
 
-}//class end
+}

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyCube : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     [SerializeField] private EnemyCubeGroup enemyCubeGroup;
 
@@ -15,13 +15,24 @@ public class EnemyCube : MonoBehaviour
         {
             if(cube.IsFilled)
             {
-                ParticleManager.Instance?.PlayParticle("Destroy", transform.position);
-                enemyCubeGroup.CubeDestroyed();
-                gameObject.SetActive(false);
+                ActivateParticle();
+                enemyCubeGroup.CubesDestroyed();
+                transform.GetComponent<Collider>().enabled = false;
+                GetDestroyed();
             }
             else
                 GameManager.Instance.LevelLose();
         }
+    }
+
+    private void ActivateParticle()
+    {
+        transform.GetChild(1).gameObject.SetActive(true);
+    }
+
+    private void GetDestroyed()
+    {
+        Destroy(transform.GetChild(0).gameObject);
     }
 
 }

@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     private const float maxSwipeTime      = 0.5f;
     private const float minSwipeDistance  = 0.10f;
 
-    private Rigidbody rigidbody;
+    private Rigidbody _rigidbody;
     private Vector3   startPos3 = Vector3.zero;
     private Vector3   targetPos = Vector3.zero;
     private Vector2   startPos2 = Vector2.zero;
@@ -42,31 +42,31 @@ public class PlayerController : MonoBehaviour
         {
             isMoving = value;
             if(!isMoving)
-                _moveVector = rigidbody.velocity = Vector3.zero;
-        }//set end
-    }//IsMoving end
+                _moveVector = _rigidbody.velocity = Vector3.zero;
+        }
+    }
 
     public void Init()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
         _player = GetComponent<Player>();
         _player.Init();
-    }//Start() end
+    }
 
     public void Restart()
     {
         _player.SpawnCubes = isMoving = false;
-        rigidbody.velocity = startPos3 = targetPos = _moveVector= Vector3.zero;
+        _rigidbody.velocity = startPos3 = targetPos = _moveVector= Vector3.zero;
         startPos2 = Vector2.zero;
         startTime = 0f;
         this.enabled = true;
-    }//Restart() end
+    }
 
     private void Update()
     {
         DetectInput();
         DecideMovement();
-    }//Update() end
+    }
 
     private void FixedUpdate()
     {
@@ -78,9 +78,9 @@ public class PlayerController : MonoBehaviour
             startPos3 = transform.position;
             targetPos = transform.position + _moveVector;
             _player.SpawnCube();
-        }//if end
+        }
         transform.position += (targetPos - startPos3) * moveSpeed * Time.fixedDeltaTime;
-    }//FixedUpdate() end
+    }
 
     private void DetectInput()
     {
@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
             Touch t = Input.GetTouch(0);
             if(t.phase == TouchPhase.Began)
             {
-                startPos2  = new Vector2(t.position.x / (float)Screen.width, t.position.y / (float)Screen.width); // normalize position according to screen width.
+                startPos2  = new Vector2(t.position.x / (float)Screen.width, t.position.y / (float)Screen.width);
                 startTime = Time.time;
             }
             if(t.phase == TouchPhase.Ended)
@@ -110,19 +110,19 @@ public class PlayerController : MonoBehaviour
                 { 
                     if(swipe.x > 0)
                         swipeDirection = Direction.Right;
-                        // swipeRight = true;
+                        
                     else
                         swipeDirection = Direction.Left;
-                        // swipeLeft = true;
-                }//if end
+                        
+                }
                 else
                 { 
                     if(swipe.y > 0)
                         swipeDirection = Direction.Up;
-                        // swipeUp = true;
+                        
                     else
                         swipeDirection = Direction.Down;
-                        // swipeDown = true;
+                        
                 }
             }
         }

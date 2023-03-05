@@ -107,8 +107,6 @@ public class AudioManager : MonoBehaviour
 		source.Play();
 
 	}
-
-
 	public void StopAllAudios()
 	{
 		for (int i = 0; i < soundsObjects.Count; i++)

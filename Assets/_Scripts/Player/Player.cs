@@ -63,22 +63,22 @@ public class Player : MonoBehaviour
                 FillCubes();
                 if(spawnCubes)
                     GridManager.Instance.ApplyFloodFill();
-            }//if end
+            }
             else
             {
                 if(cube.CanHarm)
                 {
                     Haptics.Generate(HapticTypes.HeavyImpact);
                     GameManager.Instance.LevelLose();
-                }//if end
-            }//else end
-        }//if end
-        else if(other.TryGetComponent<EnemyCube>(out EnemyCube enemyCube))
+                }
+            }
+        }
+        else if(other.TryGetComponent<Enemy>(out Enemy enemyCube))
         {
             _playerController.IsMoving = false;
             transform.position = RoundPos();
             GameManager.Instance.LevelLose();
-        }//else if end
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -87,7 +87,7 @@ public class Player : MonoBehaviour
         {
             if(cube.IsFilled)
                 spawnCubes = false;
-        }//if end
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -98,7 +98,7 @@ public class Player : MonoBehaviour
                 spawnCubes = true;
             else
                 cube.CanHarm = true;
-        }//if end
+        }
     }
 
-}//class end
+}
